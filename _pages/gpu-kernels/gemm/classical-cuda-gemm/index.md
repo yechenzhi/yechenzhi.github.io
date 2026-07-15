@@ -1,14 +1,14 @@
 ---
 layout: page
-title: Part I — Classical CUDA SGEMM
-permalink: /gpu-kernels/gemm/classical-cuda-sgemm/
+title: Part I — Classical CUDA GEMM
+permalink: /gpu-kernels/gemm/classical-cuda-gemm/
 nav: false
-series: classical-cuda-sgemm
+series: classical-cuda-gemm
 ---
 
 [← GEMM]({{ '/gpu-kernels/gemm/' | relative_url }})
 
-{% assign series_posts = site.posts | where: 'series', page.series | sort: 'episode' %}
+{% assign series_posts = site.posts | where: 'series', page.series | sort: 'chapter' %}
 {% if series_posts.size > 0 %}
   <ol>
     {% for post in series_posts %}
