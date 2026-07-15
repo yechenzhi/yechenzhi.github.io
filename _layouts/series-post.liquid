@@ -1,0 +1,48 @@
+---
+layout: post
+---
+
+{% assign series_page = site.pages | where: 'series', page.series | first %}
+{% assign series_posts = site.posts | where: 'series', page.series | sort: 'chapter' %}
+{% assign previous_chapter = nil %}
+{% assign next_chapter = nil %}
+{% assign current_chapter_found = false %}
+
+{% for series_post in series_posts %}
+  {% if current_chapter_found %}
+    {% assign next_chapter = series_post %}
+    {% break %}
+  {% endif %}
+
+  {% if series_post.url == page.url %}
+    {% assign current_chapter_found = true %}
+  {% else %}
+    {% assign previous_chapter = series_post %}
+  {% endif %}
+{% endfor %}
+
+{% if series_page %}
+  <nav aria-label="Series overview" style="margin-bottom: 1.5rem">
+    <a href="{{ series_page.url | relative_url }}">← {{ series_page.title }}</a>
+  </nav>
+{% endif %}
+
+{{ content }}
+
+{% if current_chapter_found %}
+  {% if previous_chapter or next_chapter %}
+    <hr style="margin: 2rem 0">
+    <nav aria-label="Chapter navigation" style="display: flex; justify-content: space-between; gap: 1.5rem">
+      <div style="flex: 1 1 0">
+        {% if previous_chapter %}
+          <a href="{{ previous_chapter.url | relative_url }}" rel="prev">← {{ previous_chapter.title }}</a>
+        {% endif %}
+      </div>
+      <div style="flex: 1 1 0; text-align: right">
+        {% if next_chapter %}
+          <a href="{{ next_chapter.url | relative_url }}" rel="next">{{ next_chapter.title }} →</a>
+        {% endif %}
+      </div>
+    </nav>
+  {% endif %}
+{% endif %}
