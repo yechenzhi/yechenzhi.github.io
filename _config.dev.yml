@@ -1,0 +1,5 @@
+# Local Docker/Jekyll overrides. Production builds continue to use _config.yml only.
+incremental: true
+external_sources: []
+imagemagick:
+  enabled: false

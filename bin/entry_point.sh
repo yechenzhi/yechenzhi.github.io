@@ -3,7 +3,8 @@ set -euo pipefail
 
 echo "Entry point script running"
 
-CONFIG_FILE=_config.yml
+CONFIG_FILES=_config.yml,_config.dev.yml
+CONFIG_WATCH_FILES=(_config.yml _config.dev.yml)
 DOCKER_DESTINATION=/tmp/_site
 
 # Function to manage Gemfile.lock
@@ -34,15 +35,15 @@ start_jekyll() {
     manage_gemfile_lock
     ensure_bundle_deps
     mkdir -p "$DOCKER_DESTINATION"
-    bundle exec jekyll serve --watch --port=8080 --host=0.0.0.0 --livereload --verbose --trace --force_polling --destination "$DOCKER_DESTINATION" --config "$CONFIG_FILE" &
+    bundle exec jekyll serve --watch --port=8080 --host=0.0.0.0 --livereload --verbose --trace --force_polling --destination "$DOCKER_DESTINATION" --config "$CONFIG_FILES" &
 }
 
 start_jekyll
 
 while true; do
-    inotifywait -q -e modify,move,create,delete $CONFIG_FILE
+    inotifywait -q -e modify,move,create,delete "${CONFIG_WATCH_FILES[@]}"
     if [ $? -eq 0 ]; then
-        echo "Change detected to $CONFIG_FILE, restarting Jekyll"
+        echo "Change detected in Jekyll configuration, restarting Jekyll"
         jekyll_pid=$(pgrep -f jekyll)
         kill -KILL $jekyll_pid
         start_jekyll
