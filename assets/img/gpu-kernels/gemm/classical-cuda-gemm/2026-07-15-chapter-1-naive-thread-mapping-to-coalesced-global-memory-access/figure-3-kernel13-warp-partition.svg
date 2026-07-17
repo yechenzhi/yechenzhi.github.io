@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" width="800" height="350" role="img" aria-labelledby="figure-title figure-description">
+  <title id="figure-title">Warp formation in Kernel 13</title>
+  <desc id="figure-description">A schematic of Kernel 13's 32 by 32 thread block. Rows show threadIdx.x values zero, one, omitted values, and 31. Columns show threadIdx.y values zero, one, omitted values, and 31. The column at threadIdx.y equal to 31 is highlighted as one 32-thread warp. The complete block contains 32 warps.</desc>
+  <defs>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --background: #fafaf9;
+        --text: #172033;
+        --muted-text: #475569;
+        --cell: #f1f5f9;
+        --grid: #94a3b8;
+        --boundary: #475569;
+        --accent: #cc79a7;
+        --accent-fill: #f7dceb;
+        --accent-text: #9d4778;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #111827;
+          --text: #f8fafc;
+          --muted-text: #cbd5e1;
+          --cell: #1f2937;
+          --grid: #64748b;
+          --boundary: #cbd5e1;
+          --accent-fill: #552f48;
+          --accent-text: #f0a8d0;
+        }
+      }
+
+      text {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      .background { fill: var(--background); }
+      .thread-cell { fill: var(--cell); stroke: var(--grid); stroke-width: 1.5; }
+      .selected-cell { fill: var(--accent-fill); stroke: var(--accent); }
+      .omitted-cell { fill: var(--background); stroke-dasharray: 4 4; }
+      .coordinate {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 19px;
+        font-weight: 600;
+        fill: var(--muted-text);
+      }
+      .selected-coordinate { fill: var(--accent-text); font-weight: 750; }
+      .ellipsis { font-size: 34px; font-weight: 700; fill: var(--muted-text); }
+      .column-boundary { fill: none; stroke: var(--boundary); stroke-width: 3; }
+      .selected-boundary { stroke: var(--accent); stroke-width: 5; }
+      .omitted-boundary { stroke: var(--grid); stroke-width: 2; stroke-dasharray: 7 7; }
+      .block-outline { fill: none; stroke: var(--boundary); stroke-width: 4; }
+      .column-header {
+        fill: var(--background);
+        stroke: var(--boundary);
+        stroke-width: 1.8;
+      }
+      .selected-header {
+        fill: var(--accent-fill);
+        stroke: var(--accent);
+        stroke-width: 2.5;
+      }
+      .omitted-header { stroke: none; }
+      .column-value { font-size: 18px; font-weight: 750; fill: var(--muted-text); }
+      .selected-value { fill: var(--accent-text); }
+      .axis-line { stroke: var(--muted-text); stroke-width: 2; }
+      .axis-label { font-size: 20px; font-weight: 700; fill: var(--muted-text); }
+      .axis-value {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 19px;
+        font-weight: 700;
+        fill: var(--muted-text);
+      }
+      .warp-bracket {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .warp-callout { font-size: 20px; font-weight: 750; fill: var(--accent-text); }
+      .bottom-label { font-size: 20px; font-weight: 700; fill: var(--accent-text); }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="1600" height="700" rx="24" class="background" />
+  <text x="805.0" y="83" class="axis-label" text-anchor="middle" dominant-baseline="middle">threadIdx.y</text>
+  <line x1="607" y1="165" x2="607" y2="525" class="axis-line" />
+  <text x="534" y="345.0" class="axis-label" text-anchor="middle" dominant-baseline="middle" transform="rotate(90 534 345.0)">threadIdx.x</text>
+  <line x1="601" y1="210.0" x2="613" y2="210.0" class="axis-line" />
+  <text x="577" y="210.0" class="axis-value" text-anchor="middle" dominant-baseline="middle">0</text>
+  <line x1="601" y1="300.0" x2="613" y2="300.0" class="axis-line" />
+  <text x="577" y="300.0" class="axis-value" text-anchor="middle" dominant-baseline="middle">1</text>
+  <line x1="601" y1="390.0" x2="613" y2="390.0" class="axis-line" />
+  <text x="577" y="390.0" class="axis-value" text-anchor="middle" dominant-baseline="middle">⋮</text>
+  <line x1="601" y1="480.0" x2="613" y2="480.0" class="axis-line" />
+  <text x="577" y="480.0" class="axis-value" text-anchor="middle" dominant-baseline="middle">31</text>
+  <g id="thread-block">
+    <rect x="625" y="165" width="90" height="90" class="thread-cell" />
+    <text x="670.0" y="210.0" class="coordinate" text-anchor="middle" dominant-baseline="middle">(0, 0)</text>
+    <rect x="625" y="255" width="90" height="90" class="thread-cell" />
+    <text x="670.0" y="300.0" class="coordinate" text-anchor="middle" dominant-baseline="middle">(1, 0)</text>
+    <rect x="625" y="345" width="90" height="90" class="thread-cell" />
+    <text x="670.0" y="390.0" class="ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="625" y="435" width="90" height="90" class="thread-cell" />
+    <text x="670.0" y="480.0" class="coordinate" text-anchor="middle" dominant-baseline="middle">(31, 0)</text>
+    <rect x="625" y="165" width="90" height="360" class="column-boundary" />
+    <rect x="643" y="123" width="54" height="30" rx="8" class="column-header" />
+    <text x="670.0" y="138" class="column-value" text-anchor="middle" dominant-baseline="middle">0</text>
+    <rect x="715" y="165" width="90" height="90" class="thread-cell" />
+    <text x="760.0" y="210.0" class="coordinate" text-anchor="middle" dominant-baseline="middle">(0, 1)</text>
+    <rect x="715" y="255" width="90" height="90" class="thread-cell" />
+    <text x="760.0" y="300.0" class="coordinate" text-anchor="middle" dominant-baseline="middle">(1, 1)</text>
+    <rect x="715" y="345" width="90" height="90" class="thread-cell" />
+    <text x="760.0" y="390.0" class="ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="715" y="435" width="90" height="90" class="thread-cell" />
+    <text x="760.0" y="480.0" class="coordinate" text-anchor="middle" dominant-baseline="middle">(31, 1)</text>
+    <rect x="715" y="165" width="90" height="360" class="column-boundary" />
+    <rect x="733" y="123" width="54" height="30" rx="8" class="column-header" />
+    <text x="760.0" y="138" class="column-value" text-anchor="middle" dominant-baseline="middle">1</text>
+    <rect x="805" y="165" width="90" height="90" class="thread-cell omitted-cell" />
+    <text x="850.0" y="210.0" class="ellipsis" text-anchor="middle" dominant-baseline="middle">⋯</text>
+    <rect x="805" y="255" width="90" height="90" class="thread-cell omitted-cell" />
+    <text x="850.0" y="300.0" class="ellipsis" text-anchor="middle" dominant-baseline="middle">⋯</text>
+    <rect x="805" y="345" width="90" height="90" class="thread-cell omitted-cell" />
+    <text x="850.0" y="390.0" class="ellipsis" text-anchor="middle" dominant-baseline="middle">⋱</text>
+    <rect x="805" y="435" width="90" height="90" class="thread-cell omitted-cell" />
+    <text x="850.0" y="480.0" class="ellipsis" text-anchor="middle" dominant-baseline="middle">⋯</text>
+    <rect x="805" y="165" width="90" height="360" class="column-boundary omitted-boundary" />
+    <rect x="823" y="123" width="54" height="30" rx="8" class="column-header omitted-header" />
+    <text x="850.0" y="138" class="column-value" text-anchor="middle" dominant-baseline="middle">⋯</text>
+    <rect x="895" y="165" width="90" height="90" class="thread-cell selected-cell" />
+    <text x="940.0" y="210.0" class="coordinate selected-coordinate" text-anchor="middle" dominant-baseline="middle">(0, 31)</text>
+    <rect x="895" y="255" width="90" height="90" class="thread-cell selected-cell" />
+    <text x="940.0" y="300.0" class="coordinate selected-coordinate" text-anchor="middle" dominant-baseline="middle">(1, 31)</text>
+    <rect x="895" y="345" width="90" height="90" class="thread-cell selected-cell" />
+    <text x="940.0" y="390.0" class="ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="895" y="435" width="90" height="90" class="thread-cell selected-cell" />
+    <text x="940.0" y="480.0" class="coordinate selected-coordinate" text-anchor="middle" dominant-baseline="middle">(31, 31)</text>
+    <rect x="895" y="165" width="90" height="360" class="column-boundary selected-boundary" />
+    <rect x="913" y="123" width="54" height="30" rx="8" class="column-header selected-header" />
+    <text x="940.0" y="138" class="column-value selected-value" text-anchor="middle" dominant-baseline="middle">31</text>
+    <rect x="625" y="165" width="360" height="360" class="block-outline" />
+  </g>
+  <path d="M 990 165 H 1005 V 525 H 990" class="warp-bracket" />
+  <text x="1048" y="345.0" class="warp-callout" text-anchor="middle" dominant-baseline="middle" transform="rotate(90 1048 345.0)">32 threads = one warp</text>
+  <text x="800.0" y="620" class="bottom-label" text-anchor="middle" dominant-baseline="middle">32 × 32 threads  →  32 warps</text>
+</svg>
