@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" width="800" height="350" role="img" aria-labelledby="figure-title figure-description">
   <title id="figure-title">Elements accessed by one warp in Kernel 13</title>
-  <desc id="figure-description">The selected warp is represented by threads zero, one, omitted threads, and thread 31. During one fixed k iteration, the threads load 32 elements from one column of A while all 32 load the same element B k n. After all K iterations, they store 32 elements in one column of D.</desc>
+  <desc id="figure-description">The selected warp is represented by threads zero, one, omitted threads, and thread 31. During one fixed k iteration, the threads load 32 elements from one column of A while all 32 load the same element B k n. After all K iterations, they load the old values and store the updated values for 32 elements in one column of D.</desc>
   <defs>
     <style>
       :root {
@@ -91,7 +91,7 @@
   <text x="400.0" y="170" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">(M × K)</text>
   <text x="840.0" y="132" class="matrix-name text-b" text-anchor="middle" dominant-baseline="middle">load B</text>
   <text x="840.0" y="170" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">(K × N)</text>
-  <text x="1320.0" y="132" class="matrix-name text-d" text-anchor="middle" dominant-baseline="middle">store D</text>
+  <text x="1320.0" y="132" class="matrix-name text-d" text-anchor="middle" dominant-baseline="middle">load + store D</text>
   <text x="1320.0" y="170" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">(M × N)</text>
   <g id="selected-warp">
     <rect x="42" y="220" width="140" height="60" class="warp-cell" />

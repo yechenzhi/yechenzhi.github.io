@@ -349,5 +349,5 @@
   <text x="1320.0" y="546" class="result-detail" text-anchor="middle" dominant-baseline="middle">one requested FP32 value per sector</text>
   <text x="1320.0" y="591" class="panel-note" text-anchor="middle" dominant-baseline="middle">sufficiently large stride</text>
   <line x1="95" y1="625" x2="1505" y2="625" class="bottom-rule" />
-  <text x="800.0" y="658" class="bottom-label" text-anchor="middle" dominant-baseline="middle">Addresses in one sector share a 32-B transaction; different sectors need separate transactions.</text>
+  <text x="800.0" y="658" class="bottom-label" text-anchor="middle" dominant-baseline="middle">Count the distinct 32-B sectors requested by one warp memory instruction.</text>
 </svg>
