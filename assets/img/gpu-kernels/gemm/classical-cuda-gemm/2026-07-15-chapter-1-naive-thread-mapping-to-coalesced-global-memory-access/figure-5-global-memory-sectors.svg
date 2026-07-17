@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" width="800" height="350" role="img" aria-labelledby="figure-title figure-description">
+  <title id="figure-title">Global-memory sectors requested by one warp</title>
+  <desc id="figure-description">Three panels compare the 32 FP32 addresses from one warp memory instruction. Thirty-two aligned consecutive values occupy four 32-byte sectors. Same-address requests occupy one sector and return one value to all lanes. A sufficiently large stride can place one requested value in each of 32 different sectors.</desc>
+  <defs>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --background: #fafaf9;
+        --text: #172033;
+        --muted-text: #475569;
+        --cell: #f1f5f9;
+        --grid: #64748b;
+        --consecutive-accent: #0072b2;
+        --consecutive-fill: #d9eef9;
+        --consecutive-text: #005f94;
+        --broadcast-accent: #e69f00;
+        --broadcast-fill: #fff0c2;
+        --broadcast-text: #8a5f00;
+        --strided-accent: #cc79a7;
+        --strided-fill: #f7dceb;
+        --strided-text: #9d4778;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #111827;
+          --text: #f8fafc;
+          --muted-text: #cbd5e1;
+          --cell: #1f2937;
+          --grid: #94a3b8;
+          --consecutive-fill: #123f59;
+          --consecutive-text: #67c7f4;
+          --broadcast-fill: #55400c;
+          --broadcast-text: #ffd166;
+          --strided-fill: #552f48;
+          --strided-text: #f0a8d0;
+        }
+      }
+
+      text {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      .background { fill: var(--background); }
+      .panel-separator {
+        stroke: var(--grid);
+        stroke-width: 1.5;
+        stroke-dasharray: 5 8;
+        opacity: 0.75;
+      }
+      .panel-header { stroke-width: 2.5; }
+      .header-consecutive {
+        fill: var(--consecutive-fill);
+        stroke: var(--consecutive-accent);
+      }
+      .header-broadcast {
+        fill: var(--broadcast-fill);
+        stroke: var(--broadcast-accent);
+      }
+      .header-strided {
+        fill: var(--strided-fill);
+        stroke: var(--strided-accent);
+      }
+      .panel-title { font-size: 29px; font-weight: 760; }
+      .text-consecutive { fill: var(--consecutive-text); }
+      .text-broadcast { fill: var(--broadcast-text); }
+      .text-strided { fill: var(--strided-text); }
+      .lane-strip-label {
+        font-size: 21px;
+        font-weight: 650;
+        fill: var(--muted-text);
+      }
+      .lane-cell { stroke-width: 2; }
+      .lane-consecutive {
+        fill: var(--consecutive-fill);
+        stroke: var(--consecutive-accent);
+      }
+      .lane-broadcast {
+        fill: var(--broadcast-fill);
+        stroke: var(--broadcast-accent);
+      }
+      .lane-strided {
+        fill: var(--strided-fill);
+        stroke: var(--strided-accent);
+      }
+      .omitted-lane { stroke-dasharray: 5 5; }
+      .lane-value {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 19px;
+        font-weight: 750;
+      }
+      .mapping-label {
+        font-size: 21px;
+        font-weight: 650;
+        fill: var(--text);
+      }
+      .request-arrow {
+        fill: none;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        opacity: 0.88;
+      }
+      .arrow-consecutive { stroke: var(--consecutive-accent); }
+      .arrow-broadcast { stroke: var(--broadcast-accent); }
+      .arrow-strided { stroke: var(--strided-accent); }
+      .dashed-arrow { stroke-dasharray: 6 6; }
+      .marker-consecutive { fill: var(--consecutive-accent); }
+      .marker-broadcast { fill: var(--broadcast-accent); }
+      .marker-strided { fill: var(--strided-accent); }
+      .sector { stroke-width: 3; }
+      .sector-consecutive {
+        fill: var(--consecutive-fill);
+        stroke: var(--consecutive-accent);
+      }
+      .sector-broadcast {
+        fill: var(--broadcast-fill);
+        stroke: var(--broadcast-accent);
+      }
+      .sector-strided {
+        fill: var(--strided-fill);
+        stroke: var(--strided-accent);
+      }
+      .sector-label { font-size: 17px; font-weight: 750; }
+      .word-cell {
+        fill: var(--cell);
+        stroke: var(--grid);
+        stroke-width: 1;
+      }
+      .selected-consecutive { fill: var(--consecutive-fill); }
+      .selected-broadcast { fill: var(--broadcast-fill); }
+      .selected-strided { fill: var(--strided-fill); }
+      .selected-word { stroke-width: 2; }
+      .selected-consecutive { stroke: var(--consecutive-accent); }
+      .selected-broadcast { stroke: var(--broadcast-accent); }
+      .selected-strided { stroke: var(--strided-accent); }
+      .sector-footnote {
+        font-size: 15px;
+        font-weight: 650;
+        fill: var(--muted-text);
+      }
+      .broadcast-count {
+        font-size: 16px;
+        font-weight: 850;
+        fill: var(--broadcast-text);
+      }
+      .sector-ellipsis {
+        font-size: 38px;
+        font-weight: 760;
+        fill: var(--muted-text);
+      }
+      .result-tag { stroke-width: 2.5; }
+      .result-consecutive {
+        fill: var(--consecutive-fill);
+        stroke: var(--consecutive-accent);
+      }
+      .result-broadcast {
+        fill: var(--broadcast-fill);
+        stroke: var(--broadcast-accent);
+      }
+      .result-strided {
+        fill: var(--strided-fill);
+        stroke: var(--strided-accent);
+      }
+      .result-count { font-size: 24px; font-weight: 800; }
+      .result-detail {
+        font-size: 18px;
+        font-weight: 600;
+        fill: var(--muted-text);
+      }
+      .panel-note {
+        font-size: 19px;
+        font-weight: 650;
+        fill: var(--muted-text);
+      }
+      .bottom-rule {
+        stroke: var(--grid);
+        stroke-width: 2;
+        opacity: 0.7;
+      }
+      .bottom-label {
+        font-size: 21px;
+        font-weight: 700;
+        fill: var(--text);
+      }
+    </style>
+    <marker id="arrow-consecutive" viewBox="0 0 8 7" refX="7" refY="3.5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 8 3.5 L 0 7 Z" class="marker-consecutive" />
+    </marker>
+    <marker id="arrow-broadcast" viewBox="0 0 8 7" refX="7" refY="3.5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 8 3.5 L 0 7 Z" class="marker-broadcast" />
+    </marker>
+    <marker id="arrow-strided" viewBox="0 0 8 7" refX="7" refY="3.5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 8 3.5 L 0 7 Z" class="marker-strided" />
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1600" height="700" rx="24" class="background" />
+  <line x1="540" y1="105" x2="540" y2="606" class="panel-separator" />
+  <line x1="1060" y1="105" x2="1060" y2="606" class="panel-separator" />
+  <rect x="50" y="28" width="460" height="58" rx="16" class="panel-header header-consecutive" />
+  <text x="280.0" y="57" class="panel-title text-consecutive" text-anchor="middle" dominant-baseline="middle">Consecutive addresses</text>
+  <text x="280.0" y="111" class="lane-strip-label" text-anchor="middle" dominant-baseline="middle">one warp: 32 lanes</text>
+  <rect x="89.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-consecutive" />
+  <text x="130.0" y="157" class="lane-value text-consecutive" text-anchor="middle" dominant-baseline="middle">lane 0</text>
+  <rect x="189.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-consecutive" />
+  <text x="230.0" y="157" class="lane-value text-consecutive" text-anchor="middle" dominant-baseline="middle">lane 1</text>
+  <rect x="289.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-consecutive omitted-lane" />
+  <text x="330.0" y="157" class="lane-value text-consecutive" text-anchor="middle" dominant-baseline="middle">…</text>
+  <rect x="389.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-consecutive" />
+  <text x="430.0" y="157" class="lane-value text-consecutive" text-anchor="middle" dominant-baseline="middle">lane 31</text>
+  <text x="280.0" y="217" class="mapping-label" text-anchor="middle" dominant-baseline="middle">32 consecutive FP32 addresses</text>
+  <path d="M 130.0 181 C 130.0 230, 84 242, 84 321" class="request-arrow arrow-consecutive" marker-end="url(#arrow-consecutive)" />
+  <path d="M 230.0 181 C 230.0 230, 96 242, 96 321" class="request-arrow arrow-consecutive" marker-end="url(#arrow-consecutive)" />
+  <path d="M 330.0 181 C 330.0 230, 292 242, 292 321" class="request-arrow arrow-consecutive dashed-arrow" marker-end="url(#arrow-consecutive)" />
+  <path d="M 430.0 181 C 430.0 230, 480 242, 480 321" class="request-arrow arrow-consecutive" marker-end="url(#arrow-consecutive)" />
+  <rect x="78" y="330" width="96" height="82" rx="10" class="sector sector-consecutive" />
+  <text x="126.0" y="342" class="sector-label text-consecutive" text-anchor="middle" dominant-baseline="middle">sector 0</text>
+  <rect x="78.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="90.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="102.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="114.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="126.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="138.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="150.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="162.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <text x="126.0" y="402" class="sector-footnote" text-anchor="middle" dominant-baseline="middle">8 × FP32</text>
+  <rect x="182" y="330" width="96" height="82" rx="10" class="sector sector-consecutive" />
+  <text x="230.0" y="342" class="sector-label text-consecutive" text-anchor="middle" dominant-baseline="middle">sector 1</text>
+  <rect x="182.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="194.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="206.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="218.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="230.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="242.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="254.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="266.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <text x="230.0" y="402" class="sector-footnote" text-anchor="middle" dominant-baseline="middle">8 × FP32</text>
+  <rect x="286" y="330" width="96" height="82" rx="10" class="sector sector-consecutive" />
+  <text x="334.0" y="342" class="sector-label text-consecutive" text-anchor="middle" dominant-baseline="middle">sector 2</text>
+  <rect x="286.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="298.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="310.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="322.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="334.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="346.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="358.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="370.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <text x="334.0" y="402" class="sector-footnote" text-anchor="middle" dominant-baseline="middle">8 × FP32</text>
+  <rect x="390" y="330" width="96" height="82" rx="10" class="sector sector-consecutive" />
+  <text x="438.0" y="342" class="sector-label text-consecutive" text-anchor="middle" dominant-baseline="middle">sector 3</text>
+  <rect x="390.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="402.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="414.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="426.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="438.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="450.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="462.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <rect x="474.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-consecutive" />
+  <text x="438.0" y="402" class="sector-footnote" text-anchor="middle" dominant-baseline="middle">8 × FP32</text>
+  <rect x="83" y="495" width="394" height="64" rx="15" class="result-tag result-consecutive" />
+  <text x="280.0" y="521" class="result-count text-consecutive" text-anchor="middle" dominant-baseline="middle">4 × 32-B sectors</text>
+  <text x="280.0" y="546" class="result-detail" text-anchor="middle" dominant-baseline="middle">aligned 128-B span</text>
+  <text x="280.0" y="591" class="panel-note" text-anchor="middle" dominant-baseline="middle">aligned FP32 case</text>
+  <rect x="570" y="28" width="460" height="58" rx="16" class="panel-header header-broadcast" />
+  <text x="800.0" y="57" class="panel-title text-broadcast" text-anchor="middle" dominant-baseline="middle">Same address / broadcast</text>
+  <text x="800.0" y="111" class="lane-strip-label" text-anchor="middle" dominant-baseline="middle">one warp: 32 lanes</text>
+  <rect x="609.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-broadcast" />
+  <text x="650.0" y="157" class="lane-value text-broadcast" text-anchor="middle" dominant-baseline="middle">lane 0</text>
+  <rect x="709.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-broadcast" />
+  <text x="750.0" y="157" class="lane-value text-broadcast" text-anchor="middle" dominant-baseline="middle">lane 1</text>
+  <rect x="809.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-broadcast omitted-lane" />
+  <text x="850.0" y="157" class="lane-value text-broadcast" text-anchor="middle" dominant-baseline="middle">…</text>
+  <rect x="909.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-broadcast" />
+  <text x="950.0" y="157" class="lane-value text-broadcast" text-anchor="middle" dominant-baseline="middle">lane 31</text>
+  <text x="800.0" y="217" class="mapping-label" text-anchor="middle" dominant-baseline="middle">all lanes request one FP32 address</text>
+  <path d="M 650.0 181 C 650.0 230, 806.0 242, 806.0 321" class="request-arrow arrow-broadcast" marker-end="url(#arrow-broadcast)" />
+  <path d="M 750.0 181 C 750.0 230, 806.0 242, 806.0 321" class="request-arrow arrow-broadcast" marker-end="url(#arrow-broadcast)" />
+  <path d="M 850.0 181 C 850.0 230, 806.0 242, 806.0 321" class="request-arrow arrow-broadcast dashed-arrow" marker-end="url(#arrow-broadcast)" />
+  <path d="M 950.0 181 C 950.0 230, 806.0 242, 806.0 321" class="request-arrow arrow-broadcast" marker-end="url(#arrow-broadcast)" />
+  <rect x="752.0" y="330" width="96" height="82" rx="10" class="sector sector-broadcast" />
+  <text x="800.0" y="342" class="sector-label text-broadcast" text-anchor="middle" dominant-baseline="middle">one sector</text>
+  <rect x="752.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="764.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="776.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="788.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="800.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-broadcast" />
+  <rect x="812.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="824.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="836.0" y="353" width="12.0" height="38" class="word-cell" />
+  <text x="800.0" y="402" class="sector-footnote" text-anchor="middle" dominant-baseline="middle">8 × FP32</text>
+  <text x="806.0" y="372" class="broadcast-count" text-anchor="middle" dominant-baseline="middle">×32</text>
+  <rect x="603" y="495" width="394" height="64" rx="15" class="result-tag result-broadcast" />
+  <text x="800.0" y="521" class="result-count text-broadcast" text-anchor="middle" dominant-baseline="middle">1 × 32-B sector</text>
+  <text x="800.0" y="546" class="result-detail" text-anchor="middle" dominant-baseline="middle">one requested FP32 value</text>
+  <text x="800.0" y="591" class="panel-note" text-anchor="middle" dominant-baseline="middle">same value returned to all lanes</text>
+  <rect x="1090" y="28" width="460" height="58" rx="16" class="panel-header header-strided" />
+  <text x="1320.0" y="57" class="panel-title text-strided" text-anchor="middle" dominant-baseline="middle">Large stride</text>
+  <text x="1320.0" y="111" class="lane-strip-label" text-anchor="middle" dominant-baseline="middle">one warp: 32 lanes</text>
+  <rect x="1129.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-strided" />
+  <text x="1170.0" y="157" class="lane-value text-strided" text-anchor="middle" dominant-baseline="middle">lane 0</text>
+  <rect x="1229.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-strided" />
+  <text x="1270.0" y="157" class="lane-value text-strided" text-anchor="middle" dominant-baseline="middle">lane 1</text>
+  <rect x="1329.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-strided omitted-lane" />
+  <text x="1370.0" y="157" class="lane-value text-strided" text-anchor="middle" dominant-baseline="middle">…</text>
+  <rect x="1429.0" y="133" width="82" height="48" rx="9" class="lane-cell lane-strided" />
+  <text x="1470.0" y="157" class="lane-value text-strided" text-anchor="middle" dominant-baseline="middle">lane 31</text>
+  <text x="1320.0" y="217" class="mapping-label" text-anchor="middle" dominant-baseline="middle">each address lies in a different sector</text>
+  <path d="M 1170.0 181 C 1170.0 230, 1131.0 242, 1131.0 321" class="request-arrow arrow-strided" marker-end="url(#arrow-strided)" />
+  <path d="M 1270.0 181 C 1270.0 230, 1305.0 242, 1305.0 321" class="request-arrow arrow-strided" marker-end="url(#arrow-strided)" />
+  <path d="M 1370.0 181 C 1370.0 230, 1385 242, 1385 321" class="request-arrow arrow-strided dashed-arrow" marker-end="url(#arrow-strided)" />
+  <path d="M 1470.0 181 C 1470.0 230, 1461.0 242, 1461.0 321" class="request-arrow arrow-strided" marker-end="url(#arrow-strided)" />
+  <rect x="1113" y="330" width="96" height="82" rx="10" class="sector sector-strided" />
+  <text x="1161.0" y="342" class="sector-label text-strided" text-anchor="middle" dominant-baseline="middle">sector 0</text>
+  <rect x="1113.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1125.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-strided" />
+  <rect x="1137.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1149.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1161.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1173.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1185.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1197.0" y="353" width="12.0" height="38" class="word-cell" />
+  <text x="1161.0" y="402" class="sector-footnote" text-anchor="middle" dominant-baseline="middle">8 × FP32</text>
+  <rect x="1239" y="330" width="96" height="82" rx="10" class="sector sector-strided" />
+  <text x="1287.0" y="342" class="sector-label text-strided" text-anchor="middle" dominant-baseline="middle">sector 1</text>
+  <rect x="1239.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1251.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1263.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1275.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1287.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1299.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-strided" />
+  <rect x="1311.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1323.0" y="353" width="12.0" height="38" class="word-cell" />
+  <text x="1287.0" y="402" class="sector-footnote" text-anchor="middle" dominant-baseline="middle">8 × FP32</text>
+  <rect x="1431" y="330" width="96" height="82" rx="10" class="sector sector-strided" />
+  <text x="1479.0" y="342" class="sector-label text-strided" text-anchor="middle" dominant-baseline="middle">sector 31</text>
+  <rect x="1431.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1443.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1455.0" y="353" width="12.0" height="38" class="word-cell selected-word selected-strided" />
+  <rect x="1467.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1479.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1491.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1503.0" y="353" width="12.0" height="38" class="word-cell" />
+  <rect x="1515.0" y="353" width="12.0" height="38" class="word-cell" />
+  <text x="1479.0" y="402" class="sector-footnote" text-anchor="middle" dominant-baseline="middle">8 × FP32</text>
+  <text x="1385" y="371.0" class="sector-ellipsis" text-anchor="middle" dominant-baseline="middle">…</text>
+  <rect x="1123" y="495" width="394" height="64" rx="15" class="result-tag result-strided" />
+  <text x="1320.0" y="521" class="result-count text-strided" text-anchor="middle" dominant-baseline="middle">32 × 32-B sectors</text>
+  <text x="1320.0" y="546" class="result-detail" text-anchor="middle" dominant-baseline="middle">one requested FP32 value per sector</text>
+  <text x="1320.0" y="591" class="panel-note" text-anchor="middle" dominant-baseline="middle">sufficiently large stride</text>
+  <line x1="95" y1="625" x2="1505" y2="625" class="bottom-rule" />
+  <text x="800.0" y="658" class="bottom-label" text-anchor="middle" dominant-baseline="middle">Addresses in one sector share a 32-B transaction; different sectors need separate transactions.</text>
+</svg>

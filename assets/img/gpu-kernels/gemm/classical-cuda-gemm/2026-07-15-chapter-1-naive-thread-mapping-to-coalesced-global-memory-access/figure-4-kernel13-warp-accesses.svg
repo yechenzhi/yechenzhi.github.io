@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" width="800" height="350" role="img" aria-labelledby="figure-title figure-description">
+  <title id="figure-title">Elements accessed by one warp in Kernel 13</title>
+  <desc id="figure-description">The selected warp is represented by threads zero, one, omitted threads, and thread 31. During one fixed k iteration, the threads load 32 elements from one column of A while all 32 load the same element B k n. After all K iterations, they store 32 elements in one column of D.</desc>
+  <defs>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --background: #fafaf9;
+        --text: #172033;
+        --muted-text: #475569;
+        --cell: #f1f5f9;
+        --grid: #64748b;
+        --a-accent: #0072b2;
+        --a-fill: #d9eef9;
+        --a-text: #005f94;
+        --b-accent: #e69f00;
+        --b-fill: #fff0c2;
+        --b-text: #8a5f00;
+        --d-accent: #cc79a7;
+        --d-fill: #f7dceb;
+        --d-text: #9d4778;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #111827;
+          --text: #f8fafc;
+          --muted-text: #cbd5e1;
+          --cell: #1f2937;
+          --grid: #94a3b8;
+          --a-fill: #123f59;
+          --a-text: #67c7f4;
+          --b-fill: #55400c;
+          --b-text: #ffd166;
+          --d-fill: #552f48;
+          --d-text: #f0a8d0;
+        }
+      }
+
+      text {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      .background { fill: var(--background); }
+      .phase-header { fill: var(--cell); stroke: var(--grid); stroke-width: 2; }
+      .phase-label { font-size: 26px; font-weight: 750; fill: var(--text); }
+      .matrix-name { font-size: 38px; font-weight: 760; }
+      .matrix-shape { font-size: 24px; font-weight: 550; fill: var(--muted-text); }
+      .text-a { fill: var(--a-text); }
+      .text-b { fill: var(--b-text); }
+      .text-d { fill: var(--d-text); }
+      .matrix-cell { fill: var(--cell); stroke: var(--grid); stroke-width: 1.5; }
+      .omitted-matrix-cell { stroke-dasharray: 5 5; }
+      .matrix-outline { fill: none; stroke: var(--grid); stroke-width: 3; }
+      .highlight-a { fill: var(--a-fill); stroke: var(--a-accent); stroke-width: 3; }
+      .highlight-b { fill: var(--b-fill); stroke: var(--b-accent); stroke-width: 3; }
+      .highlight-d { fill: var(--d-fill); stroke: var(--d-accent); stroke-width: 3; }
+      .matrix-ellipsis { font-size: 31px; font-weight: 750; fill: var(--muted-text); }
+      .index-label { font-size: 25px; font-weight: 800; }
+      .warp-cell { fill: var(--d-fill); stroke: var(--d-accent); stroke-width: 2; }
+      .omitted-warp-cell { stroke-dasharray: 5 5; }
+      .warp-outline { fill: none; stroke: var(--d-accent); stroke-width: 4; }
+      .warp-thread {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 22px;
+        font-weight: 750;
+        fill: var(--d-text);
+      }
+      .warp-ellipsis { font-size: 32px; font-weight: 750; fill: var(--d-text); }
+      .same-element-label { font-size: 24px; font-weight: 850; fill: var(--b-text); }
+      .operator { font-size: 30px; font-weight: 720; fill: var(--muted-text); }
+      .flow-arrow { font-size: 52px; font-weight: 500; fill: var(--muted-text); }
+      .access-tag { stroke-width: 2.5; }
+      .tag-a { fill: var(--a-fill); stroke: var(--a-accent); }
+      .tag-b { fill: var(--b-fill); stroke: var(--b-accent); }
+      .tag-d { fill: var(--d-fill); stroke: var(--d-accent); }
+      .tag-label { font-size: 23px; font-weight: 700; }
+      .warp-note { font-size: 22px; font-weight: 680; fill: var(--d-text); }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="1600" height="700" rx="24" class="background" />
+  <rect x="205" y="34" width="805" height="54" rx="15" class="phase-header" />
+  <text x="607.5" y="61" class="phase-label" text-anchor="middle" dominant-baseline="middle">one fixed k iteration</text>
+  <rect x="1135" y="34" width="370" height="54" rx="15" class="phase-header" />
+  <text x="1320.0" y="61" class="phase-label" text-anchor="middle" dominant-baseline="middle">after all K iterations</text>
+  <text x="112.0" y="132" class="matrix-name text-d" text-anchor="middle" dominant-baseline="middle">one warp</text>
+  <text x="112.0" y="170" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">fixed threadIdx.y</text>
+  <text x="400.0" y="132" class="matrix-name text-a" text-anchor="middle" dominant-baseline="middle">load A</text>
+  <text x="400.0" y="170" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">(M × K)</text>
+  <text x="840.0" y="132" class="matrix-name text-b" text-anchor="middle" dominant-baseline="middle">load B</text>
+  <text x="840.0" y="170" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">(K × N)</text>
+  <text x="1320.0" y="132" class="matrix-name text-d" text-anchor="middle" dominant-baseline="middle">store D</text>
+  <text x="1320.0" y="170" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">(M × N)</text>
+  <g id="selected-warp">
+    <rect x="42" y="220" width="140" height="60" class="warp-cell" />
+    <text x="112.0" y="250.0" class="warp-thread" text-anchor="middle" dominant-baseline="middle">x = 0</text>
+    <rect x="42" y="280" width="140" height="60" class="warp-cell" />
+    <text x="112.0" y="310.0" class="warp-thread" text-anchor="middle" dominant-baseline="middle">x = 1</text>
+    <rect x="42" y="340" width="140" height="60" class="warp-cell omitted-warp-cell" />
+    <text x="112.0" y="370.0" class="warp-ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="42" y="400" width="140" height="60" class="warp-cell" />
+    <text x="112.0" y="430.0" class="warp-thread" text-anchor="middle" dominant-baseline="middle">x = 31</text>
+    <rect x="42" y="220" width="140" height="240" class="warp-outline" />
+  </g>
+  <g id="matrix-a">
+    <rect x="250" y="220" width="60" height="60" class="matrix-cell" />
+    <rect x="310" y="220" width="60" height="60" class="matrix-cell" />
+    <rect x="370" y="220" width="60" height="60" class="matrix-cell highlight-a" />
+    <rect x="430" y="220" width="60" height="60" class="matrix-cell" />
+    <rect x="490" y="220" width="60" height="60" class="matrix-cell" />
+    <rect x="250" y="280" width="60" height="60" class="matrix-cell" />
+    <rect x="310" y="280" width="60" height="60" class="matrix-cell" />
+    <rect x="370" y="280" width="60" height="60" class="matrix-cell highlight-a" />
+    <rect x="430" y="280" width="60" height="60" class="matrix-cell" />
+    <rect x="490" y="280" width="60" height="60" class="matrix-cell" />
+    <rect x="250" y="340" width="60" height="60" class="matrix-cell omitted-matrix-cell" />
+    <text x="280.0" y="370.0" class="matrix-ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="310" y="340" width="60" height="60" class="matrix-cell omitted-matrix-cell" />
+    <text x="340.0" y="370.0" class="matrix-ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="370" y="340" width="60" height="60" class="matrix-cell omitted-matrix-cell highlight-a" />
+    <text x="400.0" y="370.0" class="matrix-ellipsis text-a" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="430" y="340" width="60" height="60" class="matrix-cell omitted-matrix-cell" />
+    <text x="460.0" y="370.0" class="matrix-ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="490" y="340" width="60" height="60" class="matrix-cell omitted-matrix-cell" />
+    <text x="520.0" y="370.0" class="matrix-ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="250" y="400" width="60" height="60" class="matrix-cell" />
+    <rect x="310" y="400" width="60" height="60" class="matrix-cell" />
+    <rect x="370" y="400" width="60" height="60" class="matrix-cell highlight-a" />
+    <rect x="430" y="400" width="60" height="60" class="matrix-cell" />
+    <rect x="490" y="400" width="60" height="60" class="matrix-cell" />
+    <rect x="250" y="220" width="300" height="240" class="matrix-outline" />
+    <text x="400.0" y="200" class="index-label text-a" text-anchor="middle" dominant-baseline="middle">k</text>
+  </g>
+  <g id="matrix-b">
+    <rect x="690" y="205" width="60" height="60" class="matrix-cell" />
+    <rect x="750" y="205" width="60" height="60" class="matrix-cell" />
+    <rect x="810" y="205" width="60" height="60" class="matrix-cell" />
+    <rect x="870" y="205" width="60" height="60" class="matrix-cell" />
+    <rect x="930" y="205" width="60" height="60" class="matrix-cell" />
+    <rect x="690" y="265" width="60" height="60" class="matrix-cell" />
+    <rect x="750" y="265" width="60" height="60" class="matrix-cell" />
+    <rect x="810" y="265" width="60" height="60" class="matrix-cell" />
+    <rect x="870" y="265" width="60" height="60" class="matrix-cell" />
+    <rect x="930" y="265" width="60" height="60" class="matrix-cell" />
+    <rect x="690" y="325" width="60" height="60" class="matrix-cell" />
+    <rect x="750" y="325" width="60" height="60" class="matrix-cell" />
+    <rect x="810" y="325" width="60" height="60" class="matrix-cell highlight-b" />
+    <rect x="870" y="325" width="60" height="60" class="matrix-cell" />
+    <rect x="930" y="325" width="60" height="60" class="matrix-cell" />
+    <rect x="690" y="385" width="60" height="60" class="matrix-cell" />
+    <rect x="750" y="385" width="60" height="60" class="matrix-cell" />
+    <rect x="810" y="385" width="60" height="60" class="matrix-cell" />
+    <rect x="870" y="385" width="60" height="60" class="matrix-cell" />
+    <rect x="930" y="385" width="60" height="60" class="matrix-cell" />
+    <rect x="690" y="445" width="60" height="60" class="matrix-cell" />
+    <rect x="750" y="445" width="60" height="60" class="matrix-cell" />
+    <rect x="810" y="445" width="60" height="60" class="matrix-cell" />
+    <rect x="870" y="445" width="60" height="60" class="matrix-cell" />
+    <rect x="930" y="445" width="60" height="60" class="matrix-cell" />
+    <rect x="690" y="205" width="300" height="300" class="matrix-outline" />
+    <text x="840.0" y="185" class="index-label text-b" text-anchor="middle" dominant-baseline="middle">n</text>
+    <text x="672" y="355.0" class="index-label text-b" text-anchor="end" dominant-baseline="middle">k</text>
+    <text x="840.0" y="355.0" class="same-element-label" text-anchor="middle" dominant-baseline="middle">×32</text>
+  </g>
+  <g id="matrix-d">
+    <rect x="1170" y="220" width="60" height="60" class="matrix-cell" />
+    <rect x="1230" y="220" width="60" height="60" class="matrix-cell" />
+    <rect x="1290" y="220" width="60" height="60" class="matrix-cell highlight-d" />
+    <rect x="1350" y="220" width="60" height="60" class="matrix-cell" />
+    <rect x="1410" y="220" width="60" height="60" class="matrix-cell" />
+    <rect x="1170" y="280" width="60" height="60" class="matrix-cell" />
+    <rect x="1230" y="280" width="60" height="60" class="matrix-cell" />
+    <rect x="1290" y="280" width="60" height="60" class="matrix-cell highlight-d" />
+    <rect x="1350" y="280" width="60" height="60" class="matrix-cell" />
+    <rect x="1410" y="280" width="60" height="60" class="matrix-cell" />
+    <rect x="1170" y="340" width="60" height="60" class="matrix-cell omitted-matrix-cell" />
+    <text x="1200.0" y="370.0" class="matrix-ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="1230" y="340" width="60" height="60" class="matrix-cell omitted-matrix-cell" />
+    <text x="1260.0" y="370.0" class="matrix-ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="1290" y="340" width="60" height="60" class="matrix-cell omitted-matrix-cell highlight-d" />
+    <text x="1320.0" y="370.0" class="matrix-ellipsis text-d" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="1350" y="340" width="60" height="60" class="matrix-cell omitted-matrix-cell" />
+    <text x="1380.0" y="370.0" class="matrix-ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="1410" y="340" width="60" height="60" class="matrix-cell omitted-matrix-cell" />
+    <text x="1440.0" y="370.0" class="matrix-ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <rect x="1170" y="400" width="60" height="60" class="matrix-cell" />
+    <rect x="1230" y="400" width="60" height="60" class="matrix-cell" />
+    <rect x="1290" y="400" width="60" height="60" class="matrix-cell highlight-d" />
+    <rect x="1350" y="400" width="60" height="60" class="matrix-cell" />
+    <rect x="1410" y="400" width="60" height="60" class="matrix-cell" />
+    <rect x="1170" y="220" width="300" height="240" class="matrix-outline" />
+    <text x="1320.0" y="200" class="index-label text-d" text-anchor="middle" dominant-baseline="middle">n</text>
+  </g>
+  <text x="215" y="340" class="flow-arrow" text-anchor="middle" dominant-baseline="middle">→</text>
+  <text x="620" y="340" class="operator" text-anchor="middle" dominant-baseline="middle">and</text>
+  <text x="1080" y="340" class="flow-arrow" text-anchor="middle" dominant-baseline="middle">→</text>
+  <text x="112.0" y="510" class="warp-note" text-anchor="middle" dominant-baseline="middle">x = 0, 1, …, 31</text>
+  <rect x="220" y="540" width="360" height="56" rx="14" class="access-tag tag-a" />
+  <text x="400.0" y="568" class="tag-label text-a" text-anchor="middle" dominant-baseline="middle">32 A elements at fixed k</text>
+  <rect x="640" y="540" width="400" height="56" rx="14" class="access-tag tag-b" />
+  <text x="840.0" y="568" class="tag-label text-b" text-anchor="middle" dominant-baseline="middle">all 32 threads load  B[k, n]</text>
+  <rect x="1120" y="540" width="400" height="56" rx="14" class="access-tag tag-d" />
+  <text x="1320.0" y="568" class="tag-label text-d" text-anchor="middle" dominant-baseline="middle">32 D elements at fixed n</text>
+  <text x="800.0" y="635" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">ℓ = 0, 1, …, 31</text>
+</svg>

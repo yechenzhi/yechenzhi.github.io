@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" width="800" height="350" role="img" aria-labelledby="figure-title figure-description">
+  <title id="figure-title">Kernel 13 and Kernel 14 thread-to-output mappings</title>
+  <desc id="figure-description">The same warp membership is used in both kernels: threadIdx.y is fixed at w and threadIdx.x equals ell for ell zero through 31. In Kernel 13, those threads map vertically to D m plus ell comma n. In Kernel 14, they map horizontally to D m comma n plus ell.</desc>
+  <defs>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --background: #fafaf9;
+        --panel: #ffffff;
+        --text: #172033;
+        --muted-text: #475569;
+        --cell: #f1f5f9;
+        --grid: #64748b;
+        --banner: #eef2f7;
+        --banner-border: #94a3b8;
+        --d-accent: #cc79a7;
+        --d-fill: #f7dceb;
+        --d-text: #8f386d;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #111827;
+          --panel: #172033;
+          --text: #f8fafc;
+          --muted-text: #cbd5e1;
+          --cell: #1f2937;
+          --grid: #94a3b8;
+          --banner: #1f2937;
+          --banner-border: #64748b;
+          --d-fill: #552f48;
+          --d-text: #f0a8d0;
+        }
+      }
+
+      text {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      .background { fill: var(--background); }
+      .membership-banner {
+        fill: var(--banner);
+        stroke: var(--banner-border);
+        stroke-width: 2;
+      }
+      .membership-title { font-size: 27px; font-weight: 780; fill: var(--text); }
+      .membership-detail {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 22px;
+        font-weight: 650;
+        fill: var(--muted-text);
+      }
+      .panel { fill: var(--panel); stroke: var(--grid); stroke-width: 2; }
+      .panel-title { font-size: 34px; font-weight: 800; fill: var(--d-text); }
+      .panel-subtitle { font-size: 23px; font-weight: 670; fill: var(--text); }
+      .axis-title { font-size: 19px; font-weight: 650; fill: var(--muted-text); }
+      .matrix-cell { fill: var(--cell); stroke: var(--grid); stroke-width: 1.5; }
+      .omitted-cell { stroke-dasharray: 6 5; }
+      .selected-cell {
+        fill: var(--d-fill);
+        stroke: var(--d-accent);
+        stroke-width: 3;
+      }
+      .matrix-outline { fill: none; stroke: var(--grid); stroke-width: 3; }
+      .selected-index { font-size: 22px; font-weight: 820; fill: var(--d-text); }
+      .index-label { font-size: 19px; font-weight: 720; fill: var(--muted-text); }
+      .thread-label {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 18px;
+        font-weight: 760;
+        fill: var(--d-text);
+      }
+      .ellipsis { font-size: 25px; font-weight: 800; }
+      .mapping-formula {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 22px;
+        font-weight: 760;
+        fill: var(--text);
+      }
+      .pattern-tag {
+        fill: var(--d-fill);
+        stroke: var(--d-accent);
+        stroke-width: 2;
+      }
+      .pattern-label { font-size: 20px; font-weight: 720; fill: var(--d-text); }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="1600" height="700" rx="24" class="background" />
+  <rect x="150" y="18" width="1300" height="92" rx="18" class="membership-banner" />
+  <text x="800.0" y="47" class="membership-title" text-anchor="middle" dominant-baseline="middle">Warp membership is unchanged</text>
+  <text x="800.0" y="81" class="membership-detail" text-anchor="middle" dominant-baseline="middle">fixed threadIdx.y = w;  threadIdx.x = ℓ = 0, 1, …, 31</text>
+  <rect x="40" y="132" width="740" height="544" rx="22" class="panel" />
+  <text x="410.0" y="170" class="panel-title" text-anchor="middle" dominant-baseline="middle">Kernel 13</text>
+  <text x="410.0" y="210" class="panel-subtitle" text-anchor="middle" dominant-baseline="middle">threadIdx.x selects the output row</text>
+  <text x="410.0" y="251" class="axis-title" text-anchor="middle" dominant-baseline="middle">output columns</text>
+  <text x="102.0" y="428.0" class="axis-title" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 102.0 428.0)">output rows</text>
+  <g id="kernel-13-d-tile">
+    <rect x="210.0" y="300" width="100" height="64" class="matrix-cell" />
+    <rect x="310.0" y="300" width="100" height="64" class="matrix-cell" />
+    <rect x="410.0" y="300" width="100" height="64" class="matrix-cell selected-cell" />
+    <rect x="510.0" y="300" width="100" height="64" class="matrix-cell" />
+    <rect x="210.0" y="364" width="100" height="64" class="matrix-cell" />
+    <rect x="310.0" y="364" width="100" height="64" class="matrix-cell" />
+    <rect x="410.0" y="364" width="100" height="64" class="matrix-cell selected-cell" />
+    <rect x="510.0" y="364" width="100" height="64" class="matrix-cell" />
+    <rect x="210.0" y="428" width="100" height="64" class="matrix-cell omitted-cell" />
+    <rect x="310.0" y="428" width="100" height="64" class="matrix-cell omitted-cell" />
+    <rect x="410.0" y="428" width="100" height="64" class="matrix-cell omitted-cell selected-cell" />
+    <rect x="510.0" y="428" width="100" height="64" class="matrix-cell omitted-cell" />
+    <rect x="210.0" y="492" width="100" height="64" class="matrix-cell" />
+    <rect x="310.0" y="492" width="100" height="64" class="matrix-cell" />
+    <rect x="410.0" y="492" width="100" height="64" class="matrix-cell selected-cell" />
+    <rect x="510.0" y="492" width="100" height="64" class="matrix-cell" />
+    <rect x="210.0" y="300" width="400" height="256" class="matrix-outline" />
+    <text x="460.0" y="279" class="selected-index" text-anchor="middle" dominant-baseline="middle">n</text>
+    <text x="188.0" y="332.0" class="index-label" text-anchor="end" dominant-baseline="middle">m</text>
+    <text x="460.0" y="332.0" class="thread-label" text-anchor="middle" dominant-baseline="middle">thread 0</text>
+    <text x="188.0" y="396.0" class="index-label" text-anchor="end" dominant-baseline="middle">m + 1</text>
+    <text x="460.0" y="396.0" class="thread-label" text-anchor="middle" dominant-baseline="middle">thread 1</text>
+    <text x="188.0" y="460.0" class="index-label ellipsis" text-anchor="end" dominant-baseline="middle">⋮</text>
+    <text x="460.0" y="460.0" class="thread-label ellipsis" text-anchor="middle" dominant-baseline="middle">⋮</text>
+    <text x="188.0" y="524.0" class="index-label" text-anchor="end" dominant-baseline="middle">m + 31</text>
+    <text x="460.0" y="524.0" class="thread-label" text-anchor="middle" dominant-baseline="middle">thread 31</text>
+  </g>
+  <text x="410.0" y="590" class="mapping-formula" text-anchor="middle" dominant-baseline="middle">thread ℓ  →  D[m + ℓ, n]</text>
+  <rect x="214" y="619" width="392" height="38" rx="12" class="pattern-tag" />
+  <text x="410.0" y="638" class="pattern-label" text-anchor="middle" dominant-baseline="middle">one column · stride N FP32</text>
+  <rect x="820" y="132" width="740" height="544" rx="22" class="panel" />
+  <text x="1190.0" y="170" class="panel-title" text-anchor="middle" dominant-baseline="middle">Kernel 14</text>
+  <text x="1190.0" y="210" class="panel-subtitle" text-anchor="middle" dominant-baseline="middle">threadIdx.x selects the output column</text>
+  <text x="1190.0" y="251" class="axis-title" text-anchor="middle" dominant-baseline="middle">output columns</text>
+  <text x="882.0" y="428.0" class="axis-title" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 882.0 428.0)">output rows</text>
+  <g id="kernel-14-d-tile">
+    <rect x="990.0" y="300" width="100" height="64" class="matrix-cell" />
+    <rect x="1090.0" y="300" width="100" height="64" class="matrix-cell" />
+    <rect x="1190.0" y="300" width="100" height="64" class="matrix-cell omitted-cell" />
+    <rect x="1290.0" y="300" width="100" height="64" class="matrix-cell" />
+    <rect x="990.0" y="364" width="100" height="64" class="matrix-cell selected-cell" />
+    <rect x="1090.0" y="364" width="100" height="64" class="matrix-cell selected-cell" />
+    <rect x="1190.0" y="364" width="100" height="64" class="matrix-cell omitted-cell selected-cell" />
+    <rect x="1290.0" y="364" width="100" height="64" class="matrix-cell selected-cell" />
+    <rect x="990.0" y="428" width="100" height="64" class="matrix-cell" />
+    <rect x="1090.0" y="428" width="100" height="64" class="matrix-cell" />
+    <rect x="1190.0" y="428" width="100" height="64" class="matrix-cell omitted-cell" />
+    <rect x="1290.0" y="428" width="100" height="64" class="matrix-cell" />
+    <rect x="990.0" y="492" width="100" height="64" class="matrix-cell" />
+    <rect x="1090.0" y="492" width="100" height="64" class="matrix-cell" />
+    <rect x="1190.0" y="492" width="100" height="64" class="matrix-cell omitted-cell" />
+    <rect x="1290.0" y="492" width="100" height="64" class="matrix-cell" />
+    <rect x="990.0" y="300" width="400" height="256" class="matrix-outline" />
+    <text x="968.0" y="396.0" class="selected-index" text-anchor="end" dominant-baseline="middle">m</text>
+    <text x="1040.0" y="279" class="index-label" text-anchor="middle" dominant-baseline="middle">n</text>
+    <text x="1040.0" y="396.0" class="thread-label" text-anchor="middle" dominant-baseline="middle">thread 0</text>
+    <text x="1140.0" y="279" class="index-label" text-anchor="middle" dominant-baseline="middle">n + 1</text>
+    <text x="1140.0" y="396.0" class="thread-label" text-anchor="middle" dominant-baseline="middle">thread 1</text>
+    <text x="1240.0" y="279" class="index-label ellipsis" text-anchor="middle" dominant-baseline="middle">…</text>
+    <text x="1240.0" y="396.0" class="thread-label ellipsis" text-anchor="middle" dominant-baseline="middle">…</text>
+    <text x="1340.0" y="279" class="index-label" text-anchor="middle" dominant-baseline="middle">n + 31</text>
+    <text x="1340.0" y="396.0" class="thread-label" text-anchor="middle" dominant-baseline="middle">thread 31</text>
+  </g>
+  <text x="1190.0" y="590" class="mapping-formula" text-anchor="middle" dominant-baseline="middle">thread ℓ  →  D[m, n + ℓ]</text>
+  <rect x="994" y="619" width="392" height="38" rx="12" class="pattern-tag" />
+  <text x="1190.0" y="638" class="pattern-label" text-anchor="middle" dominant-baseline="middle">one row · consecutive FP32</text>
+</svg>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 650" width="800" height="325" role="img" aria-labelledby="figure-title figure-description">
+  <title id="figure-title">Computing one output element in matrix multiplication</title>
+  <desc id="figure-description">Matrix A times matrix B equals matrix D. Row m of A is highlighted in blue, column n of B in orange, and their output element D m n in purple.</desc>
+  <defs>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --background: #fafaf9;
+        --text: #172033;
+        --muted-text: #475569;
+        --cell: #f1f5f9;
+        --grid: #64748b;
+        --a-accent: #0072b2;
+        --a-fill: #d9eef9;
+        --a-text: #005f94;
+        --b-accent: #e69f00;
+        --b-fill: #fff0c2;
+        --b-text: #8a5f00;
+        --d-accent: #cc79a7;
+        --d-fill: #f7dceb;
+        --d-text: #9d4778;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #111827;
+          --text: #f8fafc;
+          --muted-text: #cbd5e1;
+          --cell: #1f2937;
+          --grid: #94a3b8;
+          --a-fill: #123f59;
+          --a-text: #67c7f4;
+          --b-fill: #55400c;
+          --b-text: #ffd166;
+          --d-fill: #552f48;
+          --d-text: #f0a8d0;
+        }
+      }
+
+      text {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      .background { fill: var(--background); }
+      .matrix-cell { fill: var(--cell); stroke: var(--grid); stroke-width: 1.5; }
+      .matrix-outline { fill: none; stroke: var(--grid); stroke-width: 3; }
+      .highlight-a { fill: var(--a-fill); stroke: var(--a-accent); stroke-width: 3; }
+      .highlight-b { fill: var(--b-fill); stroke: var(--b-accent); stroke-width: 3; }
+      .highlight-d { fill: var(--d-fill); stroke: var(--d-accent); stroke-width: 4; }
+      .matrix-name { font-size: 44px; font-weight: 750; fill: var(--text); }
+      .matrix-name-a { fill: var(--a-text); }
+      .matrix-name-b { fill: var(--b-text); }
+      .matrix-name-d { fill: var(--d-text); }
+      .matrix-shape { font-size: 28px; font-weight: 550; fill: var(--muted-text); }
+      .operator { font-size: 68px; font-weight: 400; fill: var(--text); }
+      .dimension-line { stroke: var(--muted-text); stroke-width: 2; }
+      .dimension-label { font-size: 27px; font-weight: 650; fill: var(--muted-text); }
+      .index-label { font-size: 25px; font-weight: 800; }
+      .index-a { fill: var(--a-text); }
+      .index-b { fill: var(--b-text); }
+      .index-d { fill: var(--d-text); }
+      .tag { stroke-width: 2.5; }
+      .tag-a { fill: var(--a-fill); stroke: var(--a-accent); }
+      .tag-b { fill: var(--b-fill); stroke: var(--b-accent); }
+      .tag-d { fill: var(--d-fill); stroke: var(--d-accent); }
+      .tag-label { font-size: 25px; font-weight: 700; }
+      .tag-label-a { fill: var(--a-text); }
+      .tag-label-b { fill: var(--b-text); }
+      .tag-label-d { fill: var(--d-text); }
+      .tag-operator { font-size: 42px; font-weight: 650; fill: var(--text); }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="1600" height="650" rx="24" class="background" />
+  <text x="274.0" y="49" class="matrix-name matrix-name-a" text-anchor="middle" dominant-baseline="middle">A</text>
+  <text x="274.0" y="86" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">(M × K)</text>
+  <text x="788.0" y="49" class="matrix-name matrix-name-b" text-anchor="middle" dominant-baseline="middle">B</text>
+  <text x="788.0" y="86" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">(K × N)</text>
+  <text x="1288.0" y="49" class="matrix-name matrix-name-d" text-anchor="middle" dominant-baseline="middle">D</text>
+  <text x="1288.0" y="86" class="matrix-shape" text-anchor="middle" dominant-baseline="middle">(M × N)</text>
+  <g id="A">
+    <rect x="90" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="136" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="182" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="228" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="274" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="320" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="366" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="412" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="90" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="136" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="182" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="228" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="274" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="320" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="366" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="412" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="90" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="136" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="182" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="228" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="274" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="320" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="366" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="412" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="90" y="296" width="46" height="46" class="matrix-cell highlight-a" />
+    <rect x="136" y="296" width="46" height="46" class="matrix-cell highlight-a" />
+    <rect x="182" y="296" width="46" height="46" class="matrix-cell highlight-a" />
+    <rect x="228" y="296" width="46" height="46" class="matrix-cell highlight-a" />
+    <rect x="274" y="296" width="46" height="46" class="matrix-cell highlight-a" />
+    <rect x="320" y="296" width="46" height="46" class="matrix-cell highlight-a" />
+    <rect x="366" y="296" width="46" height="46" class="matrix-cell highlight-a" />
+    <rect x="412" y="296" width="46" height="46" class="matrix-cell highlight-a" />
+    <rect x="90" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="136" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="182" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="228" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="274" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="320" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="366" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="412" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="90" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="136" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="182" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="228" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="274" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="320" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="366" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="412" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="90" y="158" width="368" height="276" class="matrix-outline" />
+  </g>
+  <g id="B">
+    <rect x="650" y="112" width="46" height="46" class="matrix-cell" />
+    <rect x="696" y="112" width="46" height="46" class="matrix-cell" />
+    <rect x="742" y="112" width="46" height="46" class="matrix-cell" />
+    <rect x="788" y="112" width="46" height="46" class="matrix-cell highlight-b" />
+    <rect x="834" y="112" width="46" height="46" class="matrix-cell" />
+    <rect x="880" y="112" width="46" height="46" class="matrix-cell" />
+    <rect x="650" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="696" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="742" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="788" y="158" width="46" height="46" class="matrix-cell highlight-b" />
+    <rect x="834" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="880" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="650" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="696" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="742" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="788" y="204" width="46" height="46" class="matrix-cell highlight-b" />
+    <rect x="834" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="880" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="650" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="696" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="742" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="788" y="250" width="46" height="46" class="matrix-cell highlight-b" />
+    <rect x="834" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="880" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="650" y="296" width="46" height="46" class="matrix-cell" />
+    <rect x="696" y="296" width="46" height="46" class="matrix-cell" />
+    <rect x="742" y="296" width="46" height="46" class="matrix-cell" />
+    <rect x="788" y="296" width="46" height="46" class="matrix-cell highlight-b" />
+    <rect x="834" y="296" width="46" height="46" class="matrix-cell" />
+    <rect x="880" y="296" width="46" height="46" class="matrix-cell" />
+    <rect x="650" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="696" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="742" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="788" y="342" width="46" height="46" class="matrix-cell highlight-b" />
+    <rect x="834" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="880" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="650" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="696" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="742" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="788" y="388" width="46" height="46" class="matrix-cell highlight-b" />
+    <rect x="834" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="880" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="650" y="434" width="46" height="46" class="matrix-cell" />
+    <rect x="696" y="434" width="46" height="46" class="matrix-cell" />
+    <rect x="742" y="434" width="46" height="46" class="matrix-cell" />
+    <rect x="788" y="434" width="46" height="46" class="matrix-cell highlight-b" />
+    <rect x="834" y="434" width="46" height="46" class="matrix-cell" />
+    <rect x="880" y="434" width="46" height="46" class="matrix-cell" />
+    <rect x="650" y="112" width="276" height="368" class="matrix-outline" />
+  </g>
+  <g id="D">
+    <rect x="1150" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="1196" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="1242" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="1288" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="1334" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="1380" y="158" width="46" height="46" class="matrix-cell" />
+    <rect x="1150" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="1196" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="1242" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="1288" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="1334" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="1380" y="204" width="46" height="46" class="matrix-cell" />
+    <rect x="1150" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="1196" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="1242" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="1288" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="1334" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="1380" y="250" width="46" height="46" class="matrix-cell" />
+    <rect x="1150" y="296" width="46" height="46" class="matrix-cell" />
+    <rect x="1196" y="296" width="46" height="46" class="matrix-cell" />
+    <rect x="1242" y="296" width="46" height="46" class="matrix-cell" />
+    <rect x="1288" y="296" width="46" height="46" class="matrix-cell highlight-d" />
+    <rect x="1334" y="296" width="46" height="46" class="matrix-cell" />
+    <rect x="1380" y="296" width="46" height="46" class="matrix-cell" />
+    <rect x="1150" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="1196" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="1242" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="1288" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="1334" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="1380" y="342" width="46" height="46" class="matrix-cell" />
+    <rect x="1150" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="1196" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="1242" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="1288" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="1334" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="1380" y="388" width="46" height="46" class="matrix-cell" />
+    <rect x="1150" y="158" width="276" height="276" class="matrix-outline" />
+  </g>
+  <text x="550" y="296" class="operator" text-anchor="middle" dominant-baseline="middle">×</text>
+  <text x="1038" y="296" class="operator" text-anchor="middle" dominant-baseline="middle">=</text>
+  <text x="77" y="319.0" class="index-label index-a" text-anchor="end" dominant-baseline="middle">m</text>
+  <text x="811.0" y="135.0" class="index-label index-b" text-anchor="middle" dominant-baseline="middle">n</text>
+  <text x="1137" y="319.0" class="index-label index-d" text-anchor="end" dominant-baseline="middle">m</text>
+  <text x="1311.0" y="143" class="index-label index-d" text-anchor="middle" dominant-baseline="middle">n</text>
+  <line x1="90" y1="454" x2="458" y2="454" class="dimension-line" />
+  <line x1="90" y1="447" x2="90" y2="461" class="dimension-line" />
+  <line x1="458" y1="447" x2="458" y2="461" class="dimension-line" />
+  <text x="274.0" y="482" class="dimension-label" text-anchor="middle" dominant-baseline="middle">K</text>
+  <line x1="50" y1="158" x2="50" y2="434" class="dimension-line" />
+  <line x1="43" y1="158" x2="57" y2="158" class="dimension-line" />
+  <line x1="43" y1="434" x2="57" y2="434" class="dimension-line" />
+  <text x="24" y="296.0" class="dimension-label" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 24 296.0)">M</text>
+  <line x1="650" y1="500" x2="926" y2="500" class="dimension-line" />
+  <line x1="650" y1="493" x2="650" y2="507" class="dimension-line" />
+  <line x1="926" y1="493" x2="926" y2="507" class="dimension-line" />
+  <text x="788.0" y="528" class="dimension-label" text-anchor="middle" dominant-baseline="middle">N</text>
+  <line x1="950" y1="112" x2="950" y2="480" class="dimension-line" />
+  <line x1="943" y1="112" x2="957" y2="112" class="dimension-line" />
+  <line x1="943" y1="480" x2="957" y2="480" class="dimension-line" />
+  <text x="976" y="296.0" class="dimension-label" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 976 296.0)">K</text>
+  <line x1="1150" y1="454" x2="1426" y2="454" class="dimension-line" />
+  <line x1="1150" y1="447" x2="1150" y2="461" class="dimension-line" />
+  <line x1="1426" y1="447" x2="1426" y2="461" class="dimension-line" />
+  <text x="1288.0" y="482" class="dimension-label" text-anchor="middle" dominant-baseline="middle">N</text>
+  <line x1="1450" y1="158" x2="1450" y2="434" class="dimension-line" />
+  <line x1="1443" y1="158" x2="1457" y2="158" class="dimension-line" />
+  <line x1="1443" y1="434" x2="1457" y2="434" class="dimension-line" />
+  <text x="1476" y="296.0" class="dimension-label" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 1476 296.0)">M</text>
+  <rect x="150" y="578" width="350" height="54" rx="13" class="tag tag-a" />
+  <text x="325.0" y="605" class="tag-label tag-label-a" text-anchor="middle" dominant-baseline="middle">row m:  A[m, :]</text>
+  <text x="555" y="605" class="tag-operator" text-anchor="middle" dominant-baseline="middle">·</text>
+  <rect x="610" y="578" width="370" height="54" rx="13" class="tag tag-b" />
+  <text x="795.0" y="605" class="tag-label tag-label-b" text-anchor="middle" dominant-baseline="middle">column n:  B[:, n]</text>
+  <text x="1035" y="605" class="tag-operator" text-anchor="middle" dominant-baseline="middle">=</text>
+  <rect x="1090" y="578" width="360" height="54" rx="13" class="tag tag-d" />
+  <text x="1270.0" y="605" class="tag-label tag-label-d" text-anchor="middle" dominant-baseline="middle">output:  D[m, n]</text>
+</svg>
