@@ -143,6 +143,8 @@ __global__ void my_sgemm_naive(int M, int N, int K, float alpha, const float *A,
 
 After this mapping, the thread evaluates the entire length-$$K$$ dot product directly from global memory. It performs $$K$$ loads from each input matrix and $$K$$ multiply-add operations, then updates one output element. The kernel does not stage tiles of $$A$$ or $$B$$ in shared memory, so input values are not explicitly reused across threads.
 
+One epilogue detail also matters in the complete access count: the repository uses the old contents of $$D$$ as $$C$$, so with $$\beta=3$$ the expression `beta * D[...]` loads the same element before the final store; this load has the same lane-address pattern as the store and does not change the Kernel 13-versus-14 comparison.
+
 This fully specifies the naive work decomposition: each CTA covers an output tile, and each in-bounds thread computes the length-$$K$$ dot product for one element of that tile.
 
 ---
@@ -193,7 +195,7 @@ During one loop iteration at a fixed $$k$$:
 - thread $$\ell$$ loads $$A_{m,k}$$ and $$B_{k,n}$$;
 - thread $$\ell+1$$ loads $$A_{m+1,k}$$ and the same $$B_{k,n}$$.
 
-After all $$K$$ iterations, the two threads store $$D_{m,n}$$ and $$D_{m+1,n}$$. The same pattern extends across the entire warp: at fixed $$k$$, its 32 threads load 32 elements from column $$k$$ of $$A$$ and all load the same element $$B_{k,n}$$; after the loop, they store 32 elements in column $$n$$ of $$D$$.
+After all $$K$$ iterations, the two threads load the old values and store the updated values at $$D_{m,n}$$ and $$D_{m+1,n}$$. The same pattern extends across the entire warp: at fixed $$k$$, its 32 threads load 32 elements from column $$k$$ of $$A$$ and all load the same element $$B_{k,n}$$; in the epilogue, they load and store 32 elements in column $$n$$ of $$D$$.
 
 {% include figure.liquid
   loading="lazy"
@@ -202,27 +204,29 @@ After all $$K$$ iterations, the two threads store $$D_{m,n}$$ and $$D_{m+1,n}$$.
   zoomable=true
 %}
 
-*Figure 4. Elements accessed by one Kernel 13 warp. The $$A$$ and $$B$$ highlights show one fixed $$k$$ iteration; the $$D$$ highlights show the stores performed after all $$K$$ iterations.*
+*Figure 4. Elements accessed by one Kernel 13 warp. The $$A$$ and $$B$$ highlights show one fixed $$k$$ iteration; the $$D$$ highlights show the epilogue load and store performed after all $$K$$ iterations.*
 
-Because $$A$$, $$B$$, and $$D$$ are stored in row-major order, these matrix positions determine the corresponding address patterns. The highlighted elements in consecutive rows of $$A$$ and $$D$$ are $$K$$ and $$N$$ FP32 values apart, respectively, while all 32 threads request the same element of $$B$$. The next section translates these patterns into 32-byte memory transactions.
+Because $$A$$, $$B$$, and $$D$$ are stored in row-major order, these matrix positions determine the corresponding address patterns. The highlighted elements in consecutive rows of $$A$$ and $$D$$ are $$K$$ and $$N$$ FP32 values apart, respectively, while all 32 threads request the same element of $$B$$. The next section translates these patterns into 32-byte sector requests.
 
 ---
 
 ## How the Memory System Serves Those Addresses
 
-Consider an FP32 global-memory load such as `A[row * K + k]`. Although this is one warp instruction, each participating thread computes an address and requests the 4 bytes at that address. The result is a set of per-thread accesses—one for each participating thread—and their addresses may be consecutive, identical, or far apart. A store produces the same kind of set, but with destination addresses. **Coalescing** is the step in which the hardware serves this entire set with as few memory transactions as the address pattern allows.
+Consider an FP32 global-memory load such as `A[row * K + k]`. Although this is one warp instruction, each participating thread computes an address and requests the 4 bytes at that address. The result is a set of per-thread accesses—one for each participating thread—and their addresses may be consecutive, identical, or far apart. A store produces the same kind of set, but with destination addresses. **Coalescing** determines how many aligned memory sectors this warp request must access.
 
-For devices with compute capability 6.0 or later, view global memory as a sequence of fixed, aligned 32-byte segments. Each segment begins at an address that is a multiple of 32. The hardware determines which segments contain the bytes requested by this warp instruction. If several threads access bytes in the same segment, one 32-byte transaction serves them together. If their bytes lie in different segments, each touched segment requires a separate transaction.
+For devices with compute capability 6.0 or later, the [CUDA C++ Best Practices Guide](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/#coalesced-access-to-global-memory) gives a simple counting model: view global memory as a sequence of fixed, aligned 32-byte segments and determine which segments contain the bytes requested by one warp instruction. [Nsight Compute](https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#quantities) calls each aligned 32-byte segment a **sector**. One sector holds eight FP32 values.
 
-This is what the rule in the [CUDA C++ Best Practices Guide](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/#coalesced-access-to-global-memory) means: for **one** warp load or store, mark every aligned 32-byte segment touched by at least one participating thread, then count the marked segments.
+For **one** warp load or store, mark every sector touched by at least one participating thread, then count the marked sectors:
 
-> **Number of 32-byte transactions = number of distinct aligned 32-byte segments touched by one warp instruction.**
+> **Number of sectors requested = number of distinct aligned 32-byte sectors touched by one warp instruction.**
 
-[Nsight Compute](https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#quantities) calls each aligned 32-byte segment a **sector**. One sector holds eight FP32 values. Applying the counting rule to the three address patterns in Figure 5 gives:
+This is an instruction-level coalescing model, not a count of final DRAM transactions. A requested sector may hit in L1 or L2, and cache reuse can prevent it from reaching device memory. The sector count therefore explains the efficiency of an address pattern, but it does not by itself predict the exact runtime speedup.
 
-- **Consecutive addresses:** 32 aligned consecutive FP32 values span four sectors, so the warp needs four transactions.
-- **The same address:** if all 32 threads load one FP32 value, they touch one sector and need one transaction. The returned value is supplied to every thread, giving a broadcast-like effect.
-- **A large stride:** if every thread's address falls in a different sector, the warp needs 32 transactions.
+Applying the counting rule to the three address patterns in Figure 5 gives:
+
+- **Consecutive addresses:** 32 aligned consecutive FP32 values span four sectors, so the warp requests four sectors.
+- **The same address:** if all 32 threads load one FP32 value, they request one sector. The returned value is supplied to every thread, giving a broadcast-like effect.
+- **A large stride:** if every thread's address falls in a different sector, the warp requests 32 sectors.
 
 {% include figure.liquid
   loading="lazy"
@@ -235,13 +239,20 @@ This is what the rule in the [CUDA C++ Best Practices Guide](https://docs.nvidia
 
 Now apply this rule to the full, in-bounds Kernel 13 warp from Figure 4. Let thread $$\ell$$ compute $$D_{m+\ell,n}$$, and assume $$K,N\geq8$$:
 
-| Operation | Address requested by thread $$\ell$$ | Distance between threads | 32-byte transactions |
+| Operation | Address requested by thread $$\ell$$ | Distance between threads | 32-byte sectors requested |
 |---|---|---:|---:|
 | Load $$A$$ at fixed $$k$$ | $$A_{m+\ell,k}$$ | $$4K$$ bytes | 32 |
 | Load $$B$$ at fixed $$k$$ | $$B_{k,n}$$ | 0 bytes | 1 |
-| Store $$D$$ after the loop | $$D_{m+\ell,n}$$ | $$4N$$ bytes | 32 |
+| Load old $$D$$ in the epilogue | $$D_{m+\ell,n}$$ | $$4N$$ bytes | 32 |
+| Store new $$D$$ in the epilogue | $$D_{m+\ell,n}$$ | $$4N$$ bytes | 32 |
 
-The counts follow directly from row-major storage. Neighboring threads are $$4K$$ bytes apart in $$A$$ and $$4N$$ bytes apart in $$D$$, so for $$K,N\geq8$$ each thread touches a different sector. In contrast, all 32 threads request the same $$B_{k,n}$$, so one transaction serves the entire warp. Because the $$A$$ and $$B$$ loads are separate instructions, one fixed $$k$$ iteration requires 32 transactions for $$A$$ and one for $$B$$; the final $$D$$ store requires 32.
+The counts follow directly from row-major storage. Neighboring threads are $$4K$$ bytes apart in $$A$$ and $$4N$$ bytes apart in $$D$$, so for $$K,N\geq8$$ each thread touches a different sector. In contrast, all 32 threads request the same $$B_{k,n}$$ and therefore request only one sector. Because the $$A$$ and $$B$$ loads are separate instructions, one fixed $$k$$ iteration requests $$32+1=33$$ sectors. Across the full dot product and epilogue, the warp requests
+
+$$
+33K + 32 + 32 = 33K + 64
+$$
+
+sectors: $$33K$$ for the input loads, 32 for the old-$$D$$ load, and 32 for the new-$$D$$ store.
 
 This gives us the principle that drives the rest of the chapter:
 
@@ -295,7 +306,7 @@ A_{m,k}
 B_{k,n+\ell}.
 $$
 
-All 32 threads therefore load the same element of $$A$$ and 32 consecutive elements from one row of $$B$$. After the loop, they store 32 consecutive elements in one row of $$D$$.
+All 32 threads therefore load the same element of $$A$$ and 32 consecutive elements from one row of $$B$$. In the epilogue, they load the old values and store the updated values for 32 consecutive elements in one row of $$D$$.
 
 {% include figure.liquid
   loading="lazy"
@@ -304,7 +315,7 @@ All 32 threads therefore load the same element of $$A$$ and 32 consecutive eleme
   zoomable=true
 %}
 
-*Figure 7. Elements accessed by one Kernel 14 warp. The $$A$$ and $$B$$ highlights show one fixed $$k$$ iteration; the $$D$$ highlight shows the stores performed after all $$K$$ iterations.*
+*Figure 7. Elements accessed by one Kernel 14 warp. The $$A$$ and $$B$$ highlights show one fixed $$k$$ iteration; the $$D$$ highlight shows the epilogue load and store performed after all $$K$$ iterations.*
 
 ---
 
@@ -314,13 +325,45 @@ Assume a full, in-bounds warp, $$K,N\geq8$$, and a 32-byte-aligned starting addr
 
 | Warp memory instruction | Kernel 13 | Kernel 14 |
 |---|---:|---:|
-| Load $$A$$ at fixed $$k$$ | 32 transactions: stride $$4K$$ bytes | 1 transaction: same address |
-| Load $$B$$ at fixed $$k$$ | 1 transaction: same address | 4 transactions: 32 consecutive FP32 values |
-| Store $$D$$ after the loop | 32 transactions: stride $$4N$$ bytes | 4 transactions: 32 consecutive FP32 values |
+| Load $$A$$ at fixed $$k$$ | 32 sectors: stride $$4K$$ bytes | 1 sector: same address |
+| Load $$B$$ at fixed $$k$$ | 1 sector: same address | 4 sectors: 32 consecutive FP32 values |
+| Load old $$D$$ in the epilogue | 32 sectors: stride $$4N$$ bytes | 4 sectors: 32 consecutive FP32 values |
+| Store new $$D$$ in the epilogue | 32 sectors: stride $$4N$$ bytes | 4 sectors: 32 consecutive FP32 values |
 
-The $$A$$ and $$B$$ loads are separate instructions. At each $$k$$ iteration, their combined count changes from $$32+1=33$$ transactions in Kernel 13 to $$1+4=5$$ in Kernel 14. The final output store changes from 32 transactions to 4.
+The $$A$$ and $$B$$ loads are separate instructions. At each $$k$$ iteration, their combined count changes from $$32+1=33$$ sectors in Kernel 13 to $$1+4=5$$ in Kernel 14. The epilogue load and store change from $$32+32=64$$ sectors to $$4+4=8$$. Across one complete warp-level dot product, the instruction-level totals are therefore
 
-Kernel 14 does not reduce every entry in the table: the $$B$$ load rises from one to four transactions because the warp now requests 32 distinct, consecutive $$B$$ values instead of one shared value. The overall pattern is nevertheless much better: the 32-transaction patterns for $$A$$ and $$D$$ become one and four transactions, respectively.
+$$
+\begin{aligned}
+\text{Kernel 13:}\quad &33K+64,\\
+\text{Kernel 14:}\quad &5K+8.
+\end{aligned}
+$$
+
+Kernel 14 does not reduce every entry in the table: the $$B$$ load rises from one to four sectors because the warp now requests 32 distinct, consecutive $$B$$ values instead of one shared value. The overall pattern is nevertheless much better: the 32-sector patterns for $$A$$ and $$D$$ become one and four sectors, respectively.
+
+### H800 PCIe Performance
+
+The measurements use square matrices, $$\alpha=0.5$$, and $$\beta=3$$, with each result averaged over 50 launches by the [benchmark driver](https://github.com/yechenzhi/SGEMM_CUDA/blob/8a81f85bef33f4592a53376398aa0f37ece148d9/sgemm.cu#L120-L184).
+
+Each of the $$MN$$ output elements performs $$K$$ fused multiply-adds. Counting one FMA as two floating-point operations, the conventional GEMM workload is $$2MNK$$ FLOPs. For an average elapsed time of $$t$$ seconds,
+
+$$
+\mathrm{GFLOP/s}
+=
+\frac{2MNK}{t\times10^9}.
+$$
+
+The lower-order $$\alpha/\beta$$ epilogue operations are not included in this conventional count.
+
+| $$M=N=K$$ | Kernel 13 (GFLOP/s) | Kernel 14 (GFLOP/s) | Speedup |
+|---:|---:|---:|---:|
+| 256 | 211.3 | 1620.3 | 7.67× |
+| 512 | 287.8 | 2623.9 | 9.12× |
+| 1024 | 385.0 | 3681.7 | 9.56× |
+| 2048 | 385.6 | 3733.1 | 9.68× |
+| 4096 | 386.8 | 3582.3 | 9.26× |
+
+Kernel 14 is $$7.67\times$$ to $$9.68\times$$ faster across the tested sizes, reaching roughly $$3.6$$–$$3.7$$ TFLOP/s for the three largest matrices.
 
 ---
 
